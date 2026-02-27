@@ -6,6 +6,7 @@ import { Providers } from "./providers";
 import Footer from "./components/Footer";
 import NavigationBar from "./components/NavigationBar";
 import { Toaster } from "./components/ui/toaster";
+import { OfflineBanner } from "./components/OfflineBanner";
 
 export const metadata: Metadata = {
   title: "kadJeBus - ZeForge Zenica",
@@ -26,6 +27,7 @@ export default function RootLayout({
           </React.Suspense>
           <main className="flex-1 pt-16">{children}</main>
           <Toaster />
+          <OfflineBanner />
         </Providers>
         <Footer />
         <Analytics />
