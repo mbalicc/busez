@@ -77,19 +77,18 @@ const HomePage: React.FC = () => {
       try {
         const fetchedRoutes = await RouteService.getRoutes();
         setOriginalRoutes(fetchedRoutes);
-      } catch (error) {
-        console.error("Error fetching routes:", error);
-        // Fallback: try to get cached routes from Service Worker cache
+      } catch {
+        // Axios failed — try native fetch so SW StaleWhileRevalidate can serve from cache
         try {
           const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/routes/";
-          const cachedResponse = await caches.match(apiUrl);
-          if (cachedResponse) {
-            const cachedRoutes: Route[] = await cachedResponse.json();
+          const response = await fetch(apiUrl);
+          if (response.ok) {
+            const cachedRoutes: Route[] = await response.json();
             setOriginalRoutes(cachedRoutes);
             setIsOfflineFallback(true);
           }
         } catch {
-          // caches API not available (e.g. non-secure context)
+          // SW cache also unavailable, nothing to show
         }
       }
     };
@@ -99,20 +98,32 @@ const HomePage: React.FC = () => {
         const fetchedStations = await StationService.getStations();
         setStations(toSortedStationsAlphabetically(fetchedStations));
         saveStationsToCache(fetchedStations);
-      } catch (error) {
-        console.error("Error fetching stations:", error);
-        // Fallback: build Station-like objects from localStorage cache
+      } catch {
+        // Axios failed — try native fetch so SW StaleWhileRevalidate can serve from cache
         try {
-          const stationCache = getStationCache();
-          const cachedStations: Station[] = Object.entries(stationCache).map(
-            ([id, name]) => ({ _id: id, name } as Station)
-          );
-          if (cachedStations.length > 0) {
-            setStations(toSortedStationsAlphabetically(cachedStations));
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/stations/";
+          const response = await fetch(apiUrl);
+          if (response.ok) {
+            const fetchedStations: Station[] = await response.json();
+            setStations(toSortedStationsAlphabetically(fetchedStations));
             setIsOfflineFallback(true);
+          } else {
+            throw new Error("fetch failed");
           }
         } catch {
-          // localStorage not available
+          // SW fetch also failed — fall back to localStorage station cache
+          try {
+            const stationCache = getStationCache();
+            const cachedStations: Station[] = Object.entries(stationCache).map(
+              ([id, name]) => ({ _id: id, name } as Station)
+            );
+            if (cachedStations.length > 0) {
+              setStations(toSortedStationsAlphabetically(cachedStations));
+              setIsOfflineFallback(true);
+            }
+          } catch {
+            // localStorage not available
+          }
         }
       }
     };
@@ -132,8 +143,7 @@ const HomePage: React.FC = () => {
         try {
           const agency = await AgencyService.getAgency(agencyId);
           return { [agencyId]: agency.name };
-        } catch (error) {
-          console.error("Error fetching agency:", error);
+        } catch {
           return { [agencyId]: "Unknown Agency" };
         }
       });
