@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import NavigationBar from "./components/NavigationBar";
 import { Toaster } from "./components/ui/toaster";
 import { OfflineBanner } from "./components/OfflineBanner";
+import { SerwistRegister } from "./components/SerwistRegister";
 
 export const metadata: Metadata = {
   title: "kadJeBus - ZeForge Zenica",
@@ -31,6 +32,7 @@ export default function RootLayout({
         </Providers>
         <Footer />
         <Analytics />
+        <SerwistRegister />
       </body>
     </html>
   );
