@@ -2,6 +2,7 @@
 
 import { GeolocationDisplay } from "@/components/GeolocationDisplay";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
+import { saveStationsToCache } from "@/hooks/useOfflineStationCache";
 import { Button } from "@nextui-org/react";
 import dayjs from "dayjs";
 import "dayjs/locale/en";
@@ -86,6 +87,7 @@ const HomePage: React.FC = () => {
       try {
         const fetchedStations = await StationService.getStations();
         setStations(toSortedStationsAlphabetically(fetchedStations));
+        saveStationsToCache(fetchedStations);
       } catch (error) {
         console.error("Error fetching stations:", error);
       }
