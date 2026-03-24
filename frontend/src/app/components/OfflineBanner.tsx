@@ -12,7 +12,7 @@ export function OfflineBanner() {
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-destructive text-destructive-foreground px-4 py-3 rounded-md shadow-lg">
       <WifiOff className="w-4 h-4" />
       <span className="text-sm font-medium">
-        You are offline. Some features may not be available.
+        Nisi online. Neke funkcije možda neće biti dostupne.
       </span>
     </div>
   );
