@@ -11,18 +11,17 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope;
 
+// These are now same-origin Next.js API proxy routes — SW can cache them!
 const API_PATHS = [
-  "/stations/",
-  "/routes/",
-  "/agencies/",
-  "/cities/",
-  "/countries/",
+  "/api/routes",
+  "/api/stations",
+  "/api/agencies",
 ];
 
 const apiRuntimeCaching = API_PATHS.map((path) => ({
   matcher: ({ url }: { url: URL }) => url.pathname.startsWith(path),
   handler: new StaleWhileRevalidate({
-    cacheName: `busez-api${path.replace(/\//g, "-").replace(/-$/, "")}`,
+    cacheName: `busez${path.replace(/\//g, "-")}`,
     plugins: [
       new ExpirationPlugin({
         maxEntries: 50,

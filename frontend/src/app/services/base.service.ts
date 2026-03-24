@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 
 export default class BaseService<T> {
-  protected url = process.env.NEXT_PUBLIC_API_URL;
+  // Use relative /api proxy path so Service Worker can cache same-origin requests
+  protected url = "/api";
   protected path: string;
 
   constructor(path: string) {
@@ -45,7 +46,7 @@ export default class BaseService<T> {
   protected getItemById = async (id: string): Promise<T> => {
     try {
       const response: AxiosResponse<T> = await axios.get(
-        `${this.url}${this.path}/${id}`
+        `${this.url}${this.path}${id}`
       );
       return response.data;
     } catch (error) {
@@ -59,7 +60,6 @@ export default class BaseService<T> {
         `${this.url}${this.path}${subPath}`,
         data
       );
-
       return response.data;
     } catch (error) {
       return this.handleError(error);
@@ -69,7 +69,7 @@ export default class BaseService<T> {
   protected updateItem = async (id: number, data: T): Promise<T> => {
     try {
       const response: AxiosResponse<T> = await axios.put(
-        `${this.url}${this.path}/${id.toString()}`,
+        `${this.url}${this.path}${id.toString()}`,
         data
       );
       return response.data;
@@ -81,7 +81,7 @@ export default class BaseService<T> {
   protected deleteItem = async (id: number): Promise<T> => {
     try {
       const response: AxiosResponse<T> = await axios.delete(
-        `${this.url}${this.path}/${id.toString()}`
+        `${this.url}${this.path}${id.toString()}`
       );
       return response.data;
     } catch (error) {
