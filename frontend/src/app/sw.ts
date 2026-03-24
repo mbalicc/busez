@@ -61,15 +61,3 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
-
-self.addEventListener("fetch", (event: FetchEvent) => {
-  if (event.request.destination === "document") {
-    event.respondWith(
-      fetch(event.request).catch(() =>
-        caches
-          .match("/~offline")
-          .then((response) => response ?? new Response("Offline", { status: 503 }))
-      )
-    );
-  }
-});
