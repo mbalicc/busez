@@ -4,14 +4,6 @@ import { useEffect } from "react";
 
 export function SerwistRegister() {
   useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      window.workbox !== undefined
-    ) {
-      // workbox is available via Serwist
-    }
-
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js")
